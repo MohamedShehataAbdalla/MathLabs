@@ -1,0 +1,794 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>رياضيات الحاسب والاتصالات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Readex+Pro:wght@400;600;700&display=swap">
+<style>
+/* Layout: engineering-notebook grid paper; each lab = live "scope screen" + margin notes. Two trace colours like oscilloscope channels. */
+:root{
+  --bg:#E9EEF1; --paper:#F7F9FA; --screen:#FCFDFD; --ink:#13212B; --muted:#596A76;
+  --line:#CBD5DC; --grid:rgba(19,33,43,.055); --navbg:rgba(233,238,241,.9);
+  --ch1:#B86A06; --ch2:#08788A; --ch3:#C0325A; --ok:#2B7A4B;
+  --f-display:'Readex Pro','IBM Plex Sans Arabic',Tahoma,system-ui,sans-serif;
+  --f-body:'IBM Plex Sans Arabic','Segoe UI',Tahoma,system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Consolas,'Courier New',monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1318; --paper:#121C23; --screen:#0E171D; --ink:#E1E9EE; --muted:#8EA1AD;
+  --line:#26353F; --grid:rgba(225,233,238,.04); --navbg:rgba(12,19,24,.88);
+  --ch1:#F0AE3C; --ch2:#3EC3D0; --ch3:#F06B8E; --ok:#5CC98B; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0C1318; --paper:#121C23; --screen:#0E171D; --ink:#E1E9EE; --muted:#8EA1AD;
+  --line:#26353F; --grid:rgba(225,233,238,.04); --navbg:rgba(12,19,24,.88);
+  --ch1:#F0AE3C; --ch2:#3EC3D0; --ch3:#F06B8E; --ok:#5CC98B; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75;
+  padding-inline:clamp(16px,3vw,36px);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.page{max-width:1180px;margin-inline:auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+code,.mono{font-family:var(--f-mono)}
+a{color:var(--ch2)}
+
+/* hero */
+.hero{padding-block:44px 22px;display:grid;gap:14px}
+.hero .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--ch2);margin:0;direction:ltr;text-align:right}
+.hero h1{font-size:clamp(30px,5.2vw,54px);font-weight:700;letter-spacing:-.01em}
+.hero p.sub{margin:0;max-width:62ch;color:var(--muted);font-size:17px}
+#heroCv{width:100%;display:block;height:110px;border-block:1px solid var(--line)}
+.groups{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:var(--muted)}
+.groups b{color:var(--ink);font-weight:600}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navbg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);margin-inline:calc(-1 * clamp(16px,3vw,36px));padding-inline:clamp(16px,3vw,36px)}
+.nav-in{max-width:1180px;margin-inline:auto;display:flex;gap:6px;overflow-x:auto;padding-block:9px;scrollbar-width:thin}
+.nav a{flex:0 0 auto;text-decoration:none;color:var(--ink);font-size:14px;padding:4px 12px;border:1px solid var(--line);border-radius:99px;background:var(--paper);white-space:nowrap}
+.nav a span{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-inline-end:6px}
+.nav a:hover{border-color:var(--ch2)}
+
+/* lab */
+.lab{padding-block:52px 8px;scroll-margin-top:64px}
+.lab-head{display:grid;gap:6px;margin-bottom:18px}
+.tag{margin:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--ch2)}
+.lab h2{font-size:clamp(23px,3vw,32px);font-weight:600}
+.lede{margin:0;max-width:68ch;color:var(--muted)}
+.lab-body{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.lab-body{grid-template-columns:minmax(0,1fr)}}
+.sim{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;gap:14px;min-width:0}
+.sim canvas{width:100%;display:block;background:var(--screen);border:1px solid var(--line);border-radius:4px}
+.hint{margin:0;font-size:13px;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end}
+.ctl{display:grid;gap:4px;flex:1 1 170px;min-width:0}
+.ctl.auto{flex:0 0 auto}
+.lbl{font-size:13px;color:var(--muted)}
+.lbl output{font-family:var(--f-mono);color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;margin-inline-start:4px}
+input[type=range]{width:100%;accent-color:var(--ch2)}
+select,input[type=text]{font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--screen);color:var(--ink);min-width:0;width:100%}
+.btn{font:inherit;font-size:14px;padding:6px 14px;border:1px solid var(--line);background:var(--screen);color:var(--ink);border-radius:4px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--ch2)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+:focus-visible{outline:2px solid var(--ch2);outline-offset:2px}
+.seg{display:flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:4px;overflow:hidden;width:fit-content;max-width:100%}
+.seg button{font:inherit;font-size:13px;padding:5px 11px;border:0;background:var(--screen);color:var(--muted);cursor:pointer}
+.seg button+button{border-inline-start:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.readout{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;border-top:1px dashed var(--line);padding-top:12px}
+.stat{display:grid;line-height:1.35}
+.stat span{font-size:12px;color:var(--muted)}
+.stat b{font-family:var(--f-mono);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+.chip{font-size:13px;padding:2px 11px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.chip.ok{color:var(--ok)} .chip.warn{color:var(--ch1)} .chip.bad{color:var(--ch3)}
+.log{margin:0;font-size:14px;color:var(--ink);min-height:1.75em}
+
+/* notes */
+.notes{display:grid;gap:16px;min-width:0}
+.formula{border:1px solid var(--line);border-radius:4px;background:var(--paper);padding:10px 12px;display:grid;gap:4px}
+.formula .lbl{font-size:12px}
+.formula code{direction:ltr;text-align:left;font-size:14px;white-space:pre;overflow-x:auto;display:block;line-height:1.7}
+.real h3,.terms h3{font-size:15px;font-weight:600;margin-bottom:6px}
+.real ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.real li{font-size:15px;line-height:1.7;padding-inline-start:14px;position:relative}
+.real li::before{content:"";position:absolute;inset-inline-start:0;top:.75em;width:6px;height:6px;border-radius:50%;background:var(--ch1)}
+.real li strong{font-weight:600}
+.terms .list{display:flex;flex-wrap:wrap;gap:6px}
+.term{font-size:13px;border:1px solid var(--line);border-radius:3px;padding:2px 8px;background:var(--paper)}
+.term i{font-style:normal;font-family:var(--f-mono);font-size:12px;color:var(--ch2);margin-inline-end:6px}
+
+/* hamming */
+.row{display:grid;gap:6px}
+.bits{display:flex;flex-wrap:wrap;gap:6px;direction:ltr;justify-content:flex-end}
+.bit{width:46px;height:56px;display:grid;place-items:center;align-content:center;gap:0;border:1px solid var(--line);border-radius:4px;background:var(--screen);color:var(--ink);font-family:var(--f-mono);font-size:21px;font-weight:600;line-height:1.1;padding:0}
+.bit small{font-size:10px;font-weight:400;color:var(--muted)}
+button.bit{cursor:pointer}
+.bit.par{border-style:dashed}
+.bit.flip{border-color:var(--ch3);color:var(--ch3);border-width:2px}
+.bit.fix{border-color:var(--ok);color:var(--ok);border-width:2px}
+.checks{font-family:var(--f-mono);font-size:13px;direction:ltr;text-align:left;display:grid;gap:2px;overflow-x:auto;white-space:pre}
+
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-weight:500;color:var(--muted);font-size:12px}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+tr.on td{color:var(--ch1)}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.key{border:1px solid var(--line);border-radius:4px;padding:8px 10px;background:var(--screen);display:grid;gap:2px;min-width:0}
+.key span{font-size:12px;color:var(--muted)}
+.key b{font-family:var(--f-mono);font-size:15px;direction:ltr;text-align:right;overflow-wrap:anywhere}
+
+/* pagerank bars */
+.bars{display:grid;gap:5px}
+.bar{display:grid;grid-template-columns:52px minmax(0,1fr) 58px;gap:10px;align-items:center;font-size:13px}
+.bar .nm{font-family:var(--f-mono);direction:ltr;text-align:right}
+.bar .tr{height:10px;background:var(--screen);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.bar .fl{height:100%;background:var(--ch1);transition:width .3s}
+.bar .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:left;direction:ltr}
+
+footer{padding-block:48px 40px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:48px}
+@media (prefers-reduced-motion: reduce){.bar .fl{transition:none}}
+</style>
+
+<div class="page">
+<header class="hero">
+  <p class="eyebrow">APPLIED MATH · SIGNALS · NETWORKS · CRYPTO</p>
+  <h1>رياضيات الحاسب والاتصالات</h1>
+  <p class="sub">تسع محاكاة حيّة لأشهر الأفكار الرياضية التي يقوم عليها الإنترنت والهاتف وأنظمة التتبع. حرّك المؤشرات، اقلب البتات، اسحب المستقبِل، وراقب المعادلة وهي تعمل.</p>
+  <canvas id="heroCv" dir="ltr" aria-hidden="true"></canvas>
+  <div class="groups">
+    <span><b>الإشارات:</b> فورييه، نايكويست</span>
+    <span><b>الاتصالات:</b> QAM، شانون، هامينغ</span>
+    <span><b>الأمن:</b> RSA</span>
+    <span><b>الشبكات والمواقع:</b> ديكسترا، GPS، PageRank</span>
+  </div>
+</header>
+</div>
+
+<nav class="nav" aria-label="المعامل"><div class="nav-in">
+  <a href="#fourier"><span>01</span>فورييه</a>
+  <a href="#nyquist"><span>02</span>أخذ العينات</a>
+  <a href="#qam"><span>03</span>التضمين QAM</a>
+  <a href="#shannon"><span>04</span>سعة شانون</a>
+  <a href="#hamming"><span>05</span>تصحيح الأخطاء</a>
+  <a href="#rsa"><span>06</span>تشفير RSA</a>
+  <a href="#dijkstra"><span>07</span>أقصر مسار</a>
+  <a href="#gps"><span>08</span>تحديد الموقع</a>
+  <a href="#pagerank"><span>09</span>PageRank</a>
+</div></nav>
+
+<main class="page">
+
+<!-- 01 FOURIER -->
+<section class="lab" id="fourier">
+  <header class="lab-head">
+    <p class="tag">معمل 01 · الإشارات · Fourier Series</p>
+    <h2>فورييه: أي موجة هي مجموع دوائر تدور</h2>
+    <p class="lede">كل إشارة دورية، صوتاً كانت أو نبضة رقمية أو موجة راديو، يمكن كتابتها كمجموع موجات جيبية تردداتها مضاعفات لتردد أساسي. كل دائرة تدور هنا تمثّل توافقية (harmonic) واحدة، وطرف السلسلة يرسم الموجة. زِد عدد الدوائر وشاهد الموجة المربعة تتشكل.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <canvas id="fCv" dir="ltr" aria-label="محاكاة سلسلة فورييه"></canvas>
+      <div class="controls">
+        <div class="ctl auto"><span class="lbl">شكل الموجة</span>
+          <div class="seg" id="fType"><button data-v="square" aria-pressed="true">مربعة</button><button data-v="saw" aria-pressed="false">سن المنشار</button><button data-v="triangle" aria-pressed="false">مثلثية</button></div></div>
+        <label class="ctl" for="fN"><span class="lbl">عدد التوافقيات<output id="fNo">5</output></span><input type="range" id="fN" min="1" max="30" value="5"></label>
+        <div class="ctl auto"><button class="btn" id="fPlay">إيقاف</button></div>
+      </div>
+      <div class="readout">
+        <div class="stat"><span>أعلى توافقية مستخدمة</span><b id="fHi">9</b></div>
+        <div class="stat"><span>خطأ RMS عن الموجة المثالية</span><b id="fRms">–</b></div>
+        <div class="stat"><span>التجاوز عند الحافة (Gibbs)</span><b id="fGib">–</b></div>
+      </div>
+      <p class="hint">الخط المتقطع هو الموجة المثالية، والبرتقالي مجموع التوافقيات. الأعمدة بالأسفل هي الطيف: سعة كل تردد.</p>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">المعادلة (الموجة المربعة)</span>
+<code>f(t) = (4/π) · Σ  sin((2k−1)ωt) / (2k−1)
+        k=1..N</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>MP3 و AAC:</strong> الصوت يُحوَّل إلى طيف (تحويل MDCT)، ثم تُحذف الترددات التي لا تسمعها الأذن بسبب الحجب السمعي. هكذا تصغر الأغنية عشر مرات.</li>
+        <li><strong>صور JPEG:</strong> الصورة تُقسَّم إلى كتل 8×8 ويُطبَّق عليها DCT، وهو قريب فورييه. الترددات العالية (التفاصيل الدقيقة) تُقرَّب بخشونة أو تُهمَل.</li>
+        <li><strong>4G و 5G و Wi-Fi:</strong> تقنية OFDM تقسم القناة إلى مئات الموجات الحاملة الفرعية (subcarriers)، والانتقال بينها وبين الزمن يتم بخوارزمية FFT في كل رمز يُرسَل.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>Harmonic</i>توافقية</span><span class="term"><i>Spectrum</i>الطيف</span><span class="term"><i>FFT</i>تحويل فورييه السريع</span><span class="term"><i>Gibbs phenomenon</i>تجاوز الحافة ≈ 9%</span><span class="term"><i>Bandwidth</i>عرض النطاق</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 02 NYQUIST -->
+<section class="lab" id="nyquist">
+  <header class="lab-head">
+    <p class="tag">معمل 02 · الإشارات · Sampling Theorem</p>
+    <h2>نايكويست: كم عينة تكفي لالتقاط الإشارة؟</h2>
+    <p class="lede">لتحويل إشارة تماثلية إلى أرقام نأخذ منها عينات على فترات ثابتة. إذا كان معدل العينات أقل من ضعف تردد الإشارة، تمر عبر النقاط موجة وهمية أبطأ لا وجود لها، وهذا ما يسمى Aliasing. المحاكاة تعرض الزمن بالحركة البطيئة.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <canvas id="nCv" dir="ltr" aria-label="محاكاة أخذ العينات"></canvas>
+      <div class="controls">
+        <label class="ctl" for="nF"><span class="lbl">تردد الإشارة f (Hz)<output id="nFo">7</output></span><input type="range" id="nF" min="1" max="30" step="0.5" value="7"></label>
+        <label class="ctl" for="nS"><span class="lbl">معدل العينات fs (عينة/ث)<output id="nSo">10</output></span><input type="range" id="nS" min="2" max="60" step="1" value="10"></label>
+        <div class="ctl auto"><button class="btn" id="nPlay">إيقاف</button></div>
+      </div>
+      <div class="readout">
+        <div class="stat"><span>حد نايكويست fs/2</span><b id="nNy">5 Hz</b></div>
+        <div class="stat"><span>التردد الذي يراه النظام</span><b id="nAl">3 Hz</b></div>
+        <span class="chip bad" id="nChip">تشويه Aliasing</span>
+      </div>
+      <p class="hint">الأزرق: الإشارة الحقيقية. النقاط: العينات. الوردي المتقطع: الموجة التي سيعيد بناءها النظام من العينات.</p>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">الشرط والتردد الوهمي</span>
+<code>fs  >  2 · f_max
+f_alias = | f − k·fs | ,  k = round(f / fs)</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>الأقراص الصوتية CD:</strong> 44,100 عينة في الثانية، لأن سمع الإنسان يصل إلى قرابة 20 kHz، وضعفها مع هامش أمان يعطي 44.1 kHz.</li>
+        <li><strong>الهاتف الأرضي G.711:</strong> 8000 عينة/ث × 8 بت = 64 kbps، تكفي لصوت بشري حتى 3.4 kHz، ولهذا يبدو صوت الهاتف القديم مكتوماً.</li>
+        <li><strong>أجهزة تتبع المركبات:</strong> تسجيل الموقع كل 30 ثانية هو أخذ عينات للمسار. المنعطفات الأسرع من معدل الإرسال تضيع، والمسافة المحسوبة تقصر.</li>
+        <li><strong>عجلات السيارة في الفيديو</strong> تبدو أحياناً تدور للخلف: الكاميرا تصوّر 24 إطاراً/ث، والدوران أسرع من نصفها.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>Sampling rate</i>معدل العينات</span><span class="term"><i>Aliasing</i>تداخل الترددات</span><span class="term"><i>ADC</i>محوّل تماثلي رقمي</span><span class="term"><i>Anti-aliasing filter</i>مرشح يسبق أخذ العينات</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 03 QAM -->
+<section class="lab" id="qam">
+  <header class="lab-head">
+    <p class="tag">معمل 03 · الاتصالات · QAM Constellation</p>
+    <h2>الكوكبة الرقمية: كيف يحمل المودم عدة بتات في نبضة واحدة</h2>
+    <p class="lede">المودم يحوّل كل مجموعة بتات إلى نقطة في مستوى ثنائي الأبعاد (I/Q)، أي إلى سعة وطور لموجة حاملة. كلما زاد عدد النقاط حملت كل نقطة بتات أكثر وزادت السرعة، لكن النقاط تتقارب، والضوضاء تدفع الإشارة المستقبَلة إلى نقطة مجاورة فيحدث خطأ.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <canvas id="qCv" dir="ltr" aria-label="مخطط الكوكبة"></canvas>
+      <div class="controls">
+        <div class="ctl auto"><span class="lbl">نوع التضمين</span>
+          <div class="seg" id="qM"><button data-v="4" aria-pressed="false">QPSK</button><button data-v="16" aria-pressed="true">16-QAM</button><button data-v="64" aria-pressed="false">64-QAM</button><button data-v="256" aria-pressed="false">256-QAM</button></div></div>
+        <label class="ctl" for="qS"><span class="lbl">نسبة الإشارة للضوضاء SNR (dB)<output id="qSo">18</output></span><input type="range" id="qS" min="0" max="36" step="1" value="18"></label>
+        <div class="ctl auto btns"><button class="btn" id="qPlay">إيقاف البث</button><button class="btn" id="qClr">مسح</button></div>
+      </div>
+      <div class="readout">
+        <div class="stat"><span>بت لكل رمز</span><b id="qB">4</b></div>
+        <div class="stat"><span>رموز مُرسلة</span><b id="qN">0</b></div>
+        <div class="stat"><span>معدل خطأ الرموز SER</span><b id="qE">–</b></div>
+        <span class="chip ok" id="qChip">–</span>
+      </div>
+      <p class="hint">الحلقات الزرقاء: النقاط المثالية. النقاط البرتقالية: ما وصل فعلاً. الوردية: رموز عبرت خط القرار ففُسّرت خطأً.</p>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">الإشارة المرسلة</span>
+<code>s(t) = I·cos(2πf_c t) − Q·sin(2πf_c t)
+bits/symbol = log₂(M)
+r = s + n ,  n ~ Gaussian(0, σ²)</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>Wi-Fi 6 و Wi-Fi 7:</strong> يصلان إلى 1024-QAM ثم 4096-QAM، أي 10 ثم 12 بتاً في كل رمز، لكن فقط حين تكون قريباً جداً من الراوتر.</li>
+        <li><strong>التضمين التكيّفي (Adaptive Modulation):</strong> هاتفك ينزل تلقائياً من 256-QAM إلى 16-QAM ثم QPSK كلما ابتعدت عن البرج. لهذا تنخفض السرعة مع ضعف الإشارة. جرّب خفض SNR وشاهد متى يلزم النزول.</li>
+        <li><strong>الأقمار الصناعية:</strong> الإشارة القادمة من 36,000 كم ضعيفة جداً، فتستخدم تضمينات بنقاط قليلة متباعدة مثل QPSK و APSK.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>I/Q</i>المركبة المتوافقة والمتعامدة</span><span class="term"><i>Constellation</i>كوكبة</span><span class="term"><i>SNR</i>نسبة الإشارة للضوضاء</span><span class="term"><i>AWGN</i>ضوضاء غاوسية</span><span class="term"><i>Decision boundary</i>حد القرار</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 04 SHANNON -->
+<section class="lab" id="shannon">
+  <header class="lab-head">
+    <p class="tag">معمل 04 · الاتصالات · Shannon–Hartley</p>
+    <h2>حد شانون: أقصى سرعة يسمح بها الكون لأي قناة</h2>
+    <p class="lede">عام 1948 أثبت كلود شانون أن لكل قناة سرعة قصوى لا يمكن تجاوزها دون أخطاء، مهما بلغت براعة المهندسين. يحددها عاملان فقط: عرض النطاق B ونسبة الإشارة إلى الضوضاء. لاحظ أن مضاعفة عرض النطاق تضاعف السعة، بينما مضاعفة القدرة تضيف قليلاً.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <canvas id="sCv" dir="ltr" aria-label="منحنى سعة شانون"></canvas>
+      <div class="controls">
+        <label class="ctl" for="sB"><span class="lbl">عرض النطاق B<output id="sBo">20 MHz</output></span><input type="range" id="sB" min="0" max="1000" step="1" value="768"></label>
+        <label class="ctl" for="sS"><span class="lbl">SNR (dB)<output id="sSo">20</output></span><input type="range" id="sS" min="-10" max="40" step="1" value="20"></label>
+      </div>
+      <div class="ctl"><span class="lbl">أمثلة حقيقية</span>
+        <div class="btns" id="sPre">
+          <button class="btn" data-b="3100" data-s="35">مودم الهاتف Dial-up</button>
+          <button class="btn" data-b="20e6" data-s="15">4G LTE قناة 20 MHz</button>
+          <button class="btn" data-b="80e6" data-s="25">Wi-Fi قناة 80 MHz</button>
+          <button class="btn" data-b="100e6" data-s="20">5G قناة 100 MHz</button>
+        </div></div>
+      <div class="readout">
+        <div class="stat"><span>السعة القصوى C</span><b id="sC">–</b></div>
+        <div class="stat"><span>الكفاءة الطيفية</span><b id="sE">–</b></div>
+        <div class="stat"><span>لو ضاعفت عرض النطاق</span><b id="s2B">–</b></div>
+        <div class="stat"><span>لو ضاعفت القدرة (+3 dB)</span><b id="s2P">–</b></div>
+      </div>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">قانون شانون–هارتلي</span>
+<code>C = B · log₂(1 + S/N)
+
+S/N (linear) = 10^(SNR_dB / 10)</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>مودم الاتصال الهاتفي</strong> توقف عند 33.6 kbps: خط الهاتف عرضه نحو 3 kHz، وحد شانون له قرابة 35 kbps. سرعة 56k احتاجت حيلة خاصة في الاتجاه الهابط. اضغط المثال وتحقق.</li>
+        <li><strong>5G يربح السرعة بعرض النطاق</strong> لا بقوة الإشارة: قنوات 100 MHz وأكثر بدل 20 MHz في 4G، لأن السعة تنمو خطياً مع B ولوغاريتمياً مع القدرة.</li>
+        <li><strong>MIMO:</strong> الهوائيات المتعددة تفتح عدة قنوات مكانية متوازية، فيتضاعف الحد تقريباً بعددها. الأرقام هنا لهوائي واحد.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>Channel capacity</i>سعة القناة</span><span class="term"><i>Spectral efficiency</i>bit/s/Hz</span><span class="term"><i>dB</i>ديسيبل: 10·log₁₀</span><span class="term"><i>MIMO</i>هوائيات متعددة</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 05 HAMMING -->
+<section class="lab" id="hamming">
+  <header class="lab-head">
+    <p class="tag">معمل 05 · الاتصالات · Hamming(7,4)</p>
+    <h2>شيفرة هامينغ: المستقبِل يجد البت الفاسد ويصلحه</h2>
+    <p class="lede">بإضافة 3 بتات تكافؤ (parity) إلى كل 4 بتات بيانات، يستطيع المستقبِل اكتشاف أي بت انقلب أثناء النقل، وتحديد موقعه بالضبط، وتصحيحه دون طلب إعادة الإرسال. السر: كل بت تكافؤ يراقب مجموعة مختلفة من المواقع، ونتيجة الفحوص الثلاثة تكتب رقم الموقع الخاطئ بالنظام الثنائي.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <div class="row"><span class="lbl">1. البيانات الأصلية (4 بت) — اضغط لتغييرها</span><div class="bits" id="hData"></div></div>
+      <div class="row"><span class="lbl">2. الكلمة المرسلة (7 بت) — المتقطع بتات تكافؤ</span><div class="bits" id="hSent"></div></div>
+      <div class="row"><span class="lbl">3. المستقبَل بعد القناة — اضغط أي بت لتقلبه (ضوضاء)</span><div class="bits" id="hRecv"></div></div>
+      <div class="btns"><button class="btn" id="hOne">ضوضاء: بت واحد عشوائي</button><button class="btn" id="hTwo">ضوضاء: بتّان</button><button class="btn" id="hClr">قناة نظيفة</button></div>
+      <div class="row"><span class="lbl">4. فحوص التكافؤ عند المستقبِل (⊕ = XOR)</span><div class="checks" id="hChk"></div></div>
+      <div class="row"><span class="lbl">5. بعد التصحيح</span><div class="bits" id="hFix"></div></div>
+      <div class="readout"><div class="stat"><span>المتلازمة s₄s₂s₁</span><b id="hSyn">000</b></div><div class="stat"><span>البيانات المستخرجة</span><b id="hOut">–</b></div><span class="chip ok" id="hChip">–</span></div>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">مواقع التغطية</span>
+<code>p1 ⊕ d1 ⊕ d2 ⊕ d4 = 0   → positions 1,3,5,7
+p2 ⊕ d1 ⊕ d3 ⊕ d4 = 0   → positions 2,3,6,7
+p4 ⊕ d2 ⊕ d3 ⊕ d4 = 0   → positions 4,5,6,7
+
+error position = s1·1 + s2·2 + s4·4</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>ذاكرة ECC في الخوادم:</strong> نسخة موسّعة (SECDED) تصحح خطأ واحداً وتكشف خطأين في كل كلمة. الأشعة الكونية تقلب بتات الذاكرة فعلاً، وخوادم SQL Server الكبيرة تعتمد على هذا.</li>
+        <li><strong>رمز QR:</strong> يستخدم Reed–Solomon، ويُقرأ حتى مع تلف قرابة 30% منه في مستوى التصحيح H. لهذا يمكن وضع شعار في منتصفه.</li>
+        <li><strong>5G وأقراص SSD والمسابير الفضائية:</strong> شيفرات LDPC و Polar أحدث وأقوى، لكنها تقوم على الفكرة نفسها: تكرار محسوب يسمح بالتصحيح.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>Parity bit</i>بت تكافؤ</span><span class="term"><i>Syndrome</i>متلازمة</span><span class="term"><i>FEC</i>تصحيح أمامي للأخطاء</span><span class="term"><i>Hamming distance</i>مسافة هامينغ = 3</span><span class="term"><i>Code rate</i>4/7</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 06 RSA -->
+<section class="lab" id="rsa">
+  <header class="lab-head">
+    <p class="tag">معمل 06 · الأمن · Modular Arithmetic</p>
+    <h2>RSA: قفل يغلقه أي أحد ولا يفتحه إلا صاحبه</h2>
+    <p class="lede">التشفير بالمفتاح العام مبني على حقيقة بسيطة: ضرب عددين أوليين سهل، أما تحليل الناتج إلى عامليه فصعب جداً حين يكون العدد ضخماً. هنا نستخدم أعداداً صغيرة لترى كل خطوة، ثم نكسر المفتاح بأنفسنا لنفهم لماذا يجب أن تكون الأعداد عملاقة.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <div class="controls">
+        <label class="ctl" for="rP"><span class="lbl">العدد الأولي p</span><select id="rP"></select></label>
+        <label class="ctl" for="rQ"><span class="lbl">العدد الأولي q</span><select id="rQ"></select></label>
+        <label class="ctl" for="rM"><span class="lbl">الرسالة</span><input type="text" id="rM" value="Hello" maxlength="14"></label>
+      </div>
+      <div class="keys" id="rKeys"></div>
+      <div class="tbl"><table><thead><tr><th>الحرف</th><th>m (الرمز)</th><th>c = mᵉ mod n</th><th>cᵈ mod n</th><th>بعد الفك</th></tr></thead><tbody id="rRows"></tbody></table></div>
+      <div class="btns"><button class="btn primary" id="rBreak">اكسر المفتاح: حلّل n إلى عوامله</button></div>
+      <p class="log" id="rLog">المهاجم يعرف n و e فقط. هل يستطيع إيجاد d؟</p>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">الخطوات</span>
+<code>n = p · q
+φ(n) = (p−1)(q−1)
+choose e : gcd(e, φ) = 1
+d = e⁻¹ mod φ        (extended Euclid)
+
+encrypt: c = mᵉ mod n
+decrypt: m = cᵈ mod n</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>HTTPS:</strong> شهادة كل موقع تحمل مفتاحاً عاماً، والمتصفح يتحقق من توقيعها رياضياً قبل ظهور القفل. مع p=61 و q=53 تحصل على المثال الشهير في ويكيبيديا: n=3233، e=17، d=2753.</li>
+        <li><strong>RSA-2048 في الواقع:</strong> n عدد من 617 خانة عشرية، و e = 65537 دائماً تقريباً. أسرع خوارزمية تحليل معروفة تحتاج زمناً يفوق المعقول بالحواسيب الحالية.</li>
+        <li><strong>مفاتيح SSH وتوقيع الكود وتحديثات الأنظمة:</strong> نفس الحساب المعياري. والحواسيب الكمية (خوارزمية Shor) هي سبب الانتقال الحالي نحو التشفير ما بعد الكمي.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>mod</i>باقي القسمة</span><span class="term"><i>Euler's totient φ</i>دالة أويلر</span><span class="term"><i>Modular inverse</i>المعكوس المعياري</span><span class="term"><i>Trapdoor function</i>دالة باب مسحور</span><span class="term"><i>Public / Private key</i>مفتاح عام / خاص</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 07 DIJKSTRA -->
+<section class="lab" id="dijkstra">
+  <header class="lab-head">
+    <p class="tag">معمل 07 · الشبكات · Graph Theory</p>
+    <h2>ديكسترا: كيف يختار الموجّه أرخص طريق للحزمة</h2>
+    <p class="lede">الشبكة رسم بياني (graph): الموجّهات عُقد، والوصلات حواف لكل منها تكلفة. خوارزمية ديكسترا تتوسع من المصدر بزيارة أقرب عقدة لم تُزر بعد، ثم تحدّث مسافات جيرانها. حين تُزار العقدة تصبح مسافتها نهائية ومؤكدة.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <canvas id="dCv" dir="ltr" aria-label="رسم الشبكة"></canvas>
+      <p class="hint">اضغط عقدة لجعلها الوجهة، أو اضغط رقم وصلة لرفع تكلفتها (ازدحام).</p>
+      <div class="controls">
+        <label class="ctl" for="dS"><span class="lbl">المصدر</span><select id="dS"></select></label>
+        <label class="ctl" for="dT"><span class="lbl">الوجهة</span><select id="dT"></select></label>
+        <div class="ctl auto btns"><button class="btn primary" id="dStep">خطوة</button><button class="btn" id="dRun">تشغيل</button><button class="btn" id="dReset">إعادة</button><button class="btn" id="dRand">ازدحام عشوائي</button></div>
+      </div>
+      <p class="log" id="dLog"></p>
+      <div class="tbl"><table><thead><tr><th>العقدة</th><th>المسافة</th><th>السابق</th><th>الحالة</th></tr></thead><tbody id="dRows"></tbody></table></div>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">الخطوة الأساسية: التخفيف (relaxation)</span>
+<code>u = unvisited node with min dist
+for each neighbor v of u:
+  if dist[u] + w(u,v) < dist[v]:
+     dist[v] = dist[u] + w(u,v)
+     prev[v] = u
+
+O((V + E) log V)  with a priority queue</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>بروتوكول OSPF:</strong> كل موجّه في شبكة الشركة يعرف خريطة الوصلات كاملة (link-state)، ويشغّل ديكسترا ليبني جدول التوجيه. حين تتعطل وصلة يعيد الحساب خلال ثوانٍ.</li>
+        <li><strong>تطبيقات الملاحة:</strong> تستخدم A*، وهي ديكسترا مع تقدير للمسافة المتبقية يوجّه البحث نحو الوجهة، مع أوزان تتغير بحسب الزحام الحي.</li>
+        <li><strong>إدارة الأساطيل:</strong> اختيار أقرب مركبة لطلب طارئ، أو أقصر مسار لجولة توزيع، كلها مسائل أقصر مسار على شبكة الطرق.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>Vertex / Edge</i>عقدة / حافة</span><span class="term"><i>Weight</i>وزن، تكلفة</span><span class="term"><i>Priority queue</i>طابور أولوية</span><span class="term"><i>Greedy</i>خوارزمية جشعة</span><span class="term"><i>Shortest-path tree</i>شجرة أقصر المسارات</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 08 GPS -->
+<section class="lab" id="gps">
+  <header class="lab-head">
+    <p class="tag">معمل 08 · المواقع · Trilateration</p>
+    <h2>GPS: لماذا يحتاج جهازك أربعة أقمار لا ثلاثة؟</h2>
+    <p class="lede">المستقبِل لا يقيس المسافة مباشرة، بل زمن وصول الإشارة من كل قمر، ثم يضربه في سرعة الضوء. كل مسافة ترسم دائرة حول القمر، وتقاطع الدوائر هو موقعك. المشكلة أن ساعة جهازك رخيصة وغير دقيقة، وكل نانوثانية خطأ تساوي 30 سم. الحل: نعامل خطأ الساعة كمجهول إضافي. المحاكاة ثنائية الأبعاد للتبسيط.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <canvas id="gCv" dir="ltr" aria-label="خريطة تحديد الموقع" style="touch-action:pan-y"></canvas>
+      <p class="hint">اضغط أو اسحب على الخريطة لتحريك المستقبِل (النقطة الداكنة). العلامة × هي الموقع المحسوب.</p>
+      <div class="controls">
+        <div class="ctl auto"><span class="lbl">طريقة الحل</span>
+          <div class="seg" id="gMode"><button data-v="3" aria-pressed="true">3 أقمار، نتجاهل الساعة</button><button data-v="4" aria-pressed="false">4 أقمار، نحل δt</button></div></div>
+        <label class="ctl" for="gDt"><span class="lbl">خطأ ساعة المستقبِل δt (ns)<output id="gDto">300</output></span><input type="range" id="gDt" min="0" max="1000" step="10" value="300"></label>
+        <label class="ctl" for="gNz"><span class="lbl">ضوضاء القياس (m)<output id="gNzo">5</output></span><input type="range" id="gNz" min="0" max="60" step="1" value="5"></label>
+        <div class="ctl auto"><button class="btn" id="gNew">قياس جديد</button></div>
+      </div>
+      <div class="readout">
+        <div class="stat"><span>إزاحة الساعة c·δt</span><b id="gBias">–</b></div>
+        <div class="stat"><span>خطأ الموقع</span><b id="gErr">–</b></div>
+        <div class="stat"><span>δt المُقدَّر</span><b id="gEst">–</b></div>
+        <span class="chip ok" id="gChip">–</span>
+      </div>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">المسافة الكاذبة (pseudorange)</span>
+<code>ρᵢ = ‖sᵢ − x‖ + c·δt + εᵢ
+
+unknowns: x, y, z, δt  → need 4 satellites
+solve: Gauss–Newton least squares
+c ≈ 299,792,458 m/s  →  1 ns ≈ 0.3 m</code></div>
+      <div class="formula"><span class="lbl">المسافة بين نقطتين GPS (Haversine)</span>
+<code>a = sin²(Δφ/2) + cosφ₁·cosφ₂·sin²(Δλ/2)
+d = 2R · atan2(√a, √(1−a)) ,  R ≈ 6371 km</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>كل جهاز GPS:</strong> يحل أربع معادلات بأربعة مجاهيل عدة مرات في الثانية. بقية الأقمار المرئية تُستخدم لتقليل الخطأ بطريقة المربعات الصغرى.</li>
+        <li><strong>النسبية تدخل الحساب:</strong> ساعات الأقمار تسبق ساعات الأرض بنحو 38 ميكروثانية يومياً بسبب السرعة والجاذبية. دون تصحيح يتراكم خطأ قرابة 10 كم كل يوم.</li>
+        <li><strong>أنظمة تتبع المركبات:</strong> صيغة Haversine أعلاه هي ما يحسب المسافة المقطوعة بين نقطتين متتاليتين يرسلهما الجهاز.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>Pseudorange</i>مسافة كاذبة</span><span class="term"><i>Clock bias</i>انحراف الساعة</span><span class="term"><i>Least squares</i>المربعات الصغرى</span><span class="term"><i>DOP</i>تأثير هندسة الأقمار</span><span class="term"><i>GNSS</i>GPS، Galileo، BeiDou</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- 09 PAGERANK -->
+<section class="lab" id="pagerank">
+  <header class="lab-head">
+    <p class="tag">معمل 09 · الشبكات · Markov Chains</p>
+    <h2>PageRank: كيف رتّبت Google الإنترنت بمتجه ذاتي</h2>
+    <p class="lede">تخيّل متصفحاً عشوائياً يضغط الروابط بلا توقف، ويقفز أحياناً لصفحة عشوائية. نسبة الوقت الذي يقضيه في كل صفحة هي أهميتها. رياضياً هذا هو التوزيع المستقر لسلسلة ماركوف، أي المتجه الذاتي لمصفوفة الروابط، ونحسبه بالتكرار حتى يثبت.</p>
+  </header>
+  <div class="lab-body">
+    <div class="sim">
+      <canvas id="pCv" dir="ltr" aria-label="رسم الصفحات والروابط"></canvas>
+      <p class="hint">اضغط صفحة ثم صفحة أخرى لإضافة رابط بينهما أو حذفه. جرّب إعطاء Shop روابط واردة وشاهد ترتيبها يرتفع.</p>
+      <div class="controls">
+        <label class="ctl" for="pD"><span class="lbl">معامل التخميد d<output id="pDo">0.85</output></span><input type="range" id="pD" min="0.5" max="0.99" step="0.01" value="0.85"></label>
+        <div class="ctl auto btns"><button class="btn primary" id="pStep">تكرار واحد</button><button class="btn" id="pRun">حتى الاستقرار</button><button class="btn" id="pReset">إعادة</button></div>
+      </div>
+      <div class="readout">
+        <div class="stat"><span>التكرار</span><b id="pIt">0</b></div>
+        <div class="stat"><span>التغيّر ‖Δ‖₁</span><b id="pDl">–</b></div>
+        <span class="chip warn" id="pChip">لم يبدأ</span>
+      </div>
+      <div class="bars" id="pBars"></div>
+    </div>
+    <aside class="notes">
+      <div class="formula"><span class="lbl">المعادلة</span>
+<code>PR(p) = (1−d)/N + d · Σ  PR(q) / L(q)
+                     q→p
+L(q) = number of outgoing links of q
+matrix form:  r = G·r   (eigenvector, λ = 1)</code></div>
+      <div class="real"><h3>أين تراها في الواقع</h3><ul>
+        <li><strong>Google 1998:</strong> ورقة Brin و Page الأصلية استخدمت d = 0.85، أي أن المتصفح يتبع رابطاً بنسبة 85% ويقفز عشوائياً بنسبة 15%. القفز يضمن أن التكرار يستقر دائماً.</li>
+        <li><strong>الشبكات الاجتماعية والتوصيات:</strong> ترتيب الحسابات المؤثرة واقتراحات المتابعة تستخدم صيغاً مشتقة من نفس فكرة المتجه الذاتي.</li>
+        <li><strong>الاقتباسات العلمية والبنية التحتية:</strong> قياس أهمية البحوث، أو تحديد أكثر الموجّهات حساسية في الشبكة إن تعطلت.</li>
+      </ul></div>
+      <div class="terms"><h3>مصطلحات</h3><div class="list">
+        <span class="term"><i>Markov chain</i>سلسلة ماركوف</span><span class="term"><i>Eigenvector</i>متجه ذاتي</span><span class="term"><i>Power iteration</i>طريقة القوى</span><span class="term"><i>Damping factor</i>معامل التخميد</span><span class="term"><i>Dangling node</i>صفحة بلا روابط خارجة</span>
+      </div></div>
+    </aside>
+  </div>
+</section>
+
+<footer>المحاكاة تبسّط الواقع عمداً: الأرقام الصغيرة في RSA، والبعدان في GPS، وهوائي واحد في شانون. الرياضيات نفسها هي ما يعمل في الأنظمة الحقيقية.</footer>
+</main>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COL={};
+function readCol(){const cs=getComputedStyle(document.documentElement);for(const k of ['ink','muted','line','grid','ch1','ch2','ch3','ok','screen','paper'])COL[k]=cs.getPropertyValue('--'+k).trim();}
+readCol();
+function fit(cv,hf){const w=Math.max(220,cv.getBoundingClientRect().width);const h=Math.round(typeof hf==='function'?hf(w):hf);const d=Math.min(window.devicePixelRatio||1,2);cv.width=Math.round(w*d);cv.height=Math.round(h*d);cv.style.height=h+'px';const ctx=cv.getContext('2d');ctx.setTransform(d,0,0,d,0,0);return {ctx,w,h};}
+function line(c,a,b,x,y){c.beginPath();c.moveTo(a,b);c.lineTo(x,y);c.stroke();}
+function txt(c,s,x,y,al='center',sz=11,col=COL.muted,bl='middle'){c.font=`${sz}px 'JetBrains Mono', ui-monospace, monospace`;c.fillStyle=col;c.textAlign=al;c.textBaseline=bl;c.fillText(s,x,y);}
+function seg(el,cb){el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));cb(b.dataset.v);});}
+function gauss(){let u=0;while(!u)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*Math.random());}
+function chip(el,cls,t){el.className='chip '+cls;el.textContent=t;}
+function solve(A,b){const n=b.length,M=A.map((r,i)=>[...r,b[i]]);for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;[M[c],M[p]]=[M[p],M[c]];if(Math.abs(M[c][c])<1e-12)return null;for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c]/M[c][c];for(let k=c;k<=n;k++)M[r][k]-=f*M[c][k];}}return M.map((r,i)=>r[n]/r[i]);}
+
+const LABS=[];
+const io=new IntersectionObserver(es=>{for(const e of es){const L=LABS.find(l=>l.el===e.target);if(L){L.vis=e.isIntersecting;if(L.vis)L.draw();}}},{rootMargin:'120px 0px'});
+function reg(L){LABS.push(L);L.vis=false;L.resize();L.draw();io.observe(L.el);}
+function redrawAll(){LABS.forEach(L=>{L.resize();L.draw();});}
+let lastT=performance.now();
+function loop(now){const dt=Math.min(.05,(now-lastT)/1000);lastT=now;for(const L of LABS)if(L.vis&&L.tick&&L.live())L.tick(dt);requestAnimationFrame(loop);}
+let rzT;addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(redrawAll,120);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readCol();redrawAll();});
+new MutationObserver(()=>{readCol();redrawAll();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* HERO */
+(()=>{const cv=$('#heroCv');let g,t=0;
+const L={el:cv,resize(){g=fit(cv,110);},live:()=>!RM,tick(dt){t+=dt;this.draw();},
+draw(){const {ctx,w,h}=g;ctx.clearRect(0,0,w,h);const cy=h/2,A=h*.36;const f=x=>.62*Math.sin(x*.018+t*1.3)+.28*Math.sin(x*.054-t*2.1)+.12*Math.sin(x*.11+t*3);
+ ctx.strokeStyle=COL.line;ctx.lineWidth=1;line(ctx,0,cy,w,cy);
+ ctx.strokeStyle=COL.ch2;ctx.lineWidth=1.6;ctx.beginPath();for(let x=0;x<=w;x+=2){const y=cy-A*f(x);x?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+ ctx.strokeStyle=COL.ch1;ctx.fillStyle=COL.ch1;ctx.lineWidth=1.2;for(let x=14;x<w;x+=28){const y=cy-A*f(x);line(ctx,x,cy,x,y);ctx.beginPath();ctx.arc(x,y,2.6,0,7);ctx.fill();}}};
+reg(L);})();
+
+/* 01 FOURIER */
+(()=>{const el=$('#fourier'),cv=$('#fCv');let g,t=0,play=!RM,type='square',N=5;
+const amp=n=>{if(type==='square')return n%2?4/(Math.PI*n):0;if(type==='saw')return(n%2?1:-1)*2/(Math.PI*n);return n%2?((((n-1)/2)%2)?-1:1)*8/(Math.PI*Math.PI*n*n):0;};
+const terms=()=>{const a=[];for(let n=1;a.length<N&&n<200;n++){const c=amp(n);if(c)a.push([n,c]);}return a;};
+function target(x){const p=((x%(2*Math.PI))+2*Math.PI)%(2*Math.PI);if(type==='square')return p<Math.PI?1:-1;if(type==='saw')return p<Math.PI?p/Math.PI:(p-2*Math.PI)/Math.PI;if(p<Math.PI/2)return 2*p/Math.PI;if(p<1.5*Math.PI)return 2-2*p/Math.PI;return 2*p/Math.PI-4;}
+function stats(){const T=terms();let se=0,mx=-9;const K=1200;for(let i=0;i<K;i++){const x=i/K*2*Math.PI;let s=0;for(const[n,a]of T)s+=a*Math.sin(n*x);se+=(s-target(x))**2;if(x<Math.PI)mx=Math.max(mx,s);}
+ $('#fHi').textContent=T[T.length-1][0];$('#fRms').textContent=Math.sqrt(se/K).toFixed(3);
+ $('#fGib').textContent=type==='triangle'?'لا يوجد (موجة متصلة)':((mx-1)*100).toFixed(1)+'%';}
+const L={el,resize(){g=fit(cv,w=>w<560?340:330);},live:()=>play,tick(dt){t+=dt*1.1;this.draw();},
+draw(){const {ctx,w,h}=g;ctx.clearRect(0,0,w,h);const H1=h-100,R=Math.min(H1*.33,w*.12),cx=R*1.3+14,cy=H1/2+8,x0=cx+R*1.5+10,span=w-x0-12,per=4*Math.PI/span,T=terms();
+ ctx.strokeStyle=COL.line;ctx.lineWidth=1;line(ctx,x0,cy,w-8,cy);line(ctx,x0,cy-R,x0,cy+R);
+ ctx.setLineDash([4,4]);ctx.strokeStyle=COL.muted;ctx.globalAlpha=.75;ctx.beginPath();for(let i=0;i<=span;i+=2){const y=cy-R*target(t-i*per);i?ctx.lineTo(x0+i,y):ctx.moveTo(x0+i,y);}ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+ ctx.strokeStyle=COL.ch1;ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=span;i++){let s=0;const tt=t-i*per;for(const[n,a]of T)s+=a*Math.sin(n*tt);const y=cy-R*s;i?ctx.lineTo(x0+i,y):ctx.moveTo(x0+i,y);}ctx.stroke();
+ ctx.save();ctx.beginPath();ctx.rect(0,0,x0-2,H1+14);ctx.clip();let x=cx,y=cy;ctx.lineWidth=1;
+ for(const[n,a]of T){const r=R*a,px=x,py=y;x+=r*Math.cos(n*t);y-=r*Math.sin(n*t);ctx.strokeStyle=COL.ch2;ctx.globalAlpha=.3;ctx.beginPath();ctx.arc(px,py,Math.abs(r),0,7);ctx.stroke();ctx.globalAlpha=.95;line(ctx,px,py,x,y);}
+ ctx.restore();ctx.globalAlpha=1;
+ ctx.setLineDash([3,3]);ctx.strokeStyle=COL.ch2;line(ctx,x,y,x0,y);ctx.setLineDash([]);ctx.fillStyle=COL.ch1;ctx.beginPath();ctx.arc(x0,y,3.5,0,7);ctx.fill();
+ const top=H1+22,base=h-20,bh=base-top-4,bw=(w-28)/40,a1=Math.abs(amp(1)),inc=new Set(T.map(v=>v[0]));
+ ctx.strokeStyle=COL.line;line(ctx,12,base,w-12,base);
+ for(let n=1;n<=40;n++){const c=Math.abs(amp(n));if(!c)continue;const hh=Math.max(2,c/a1*bh),xx=14+(n-1)*bw;ctx.fillStyle=inc.has(n)?COL.ch1:COL.muted;ctx.globalAlpha=inc.has(n)?1:.3;ctx.fillRect(xx,base-hh,Math.max(2,bw*.62),hh);}
+ ctx.globalAlpha=1;for(const n of [1,10,20,30,40])txt(ctx,String(n),14+(n-1)*bw+bw*.3,base+10,'center',10);
+ txt(ctx,'spectrum · harmonic n',w-12,top-4,'right',10);}};
+seg($('#fType'),v=>{type=v;stats();L.draw();});
+$('#fN').addEventListener('input',e=>{N=+e.target.value;$('#fNo').textContent=N;stats();L.draw();});
+$('#fPlay').addEventListener('click',e=>{play=!play;e.target.textContent=play?'إيقاف':'تشغيل';});
+$('#fPlay').textContent=play?'إيقاف':'تشغيل';
+stats();reg(L);})();
+
+/* 02 NYQUIST */
+(()=>{const el=$('#nyquist'),cv=$('#nCv');let g,f=7,fs=10,tau=0,play=!RM;
+function info(){const k=Math.round(f/fs),fa=Math.abs(f-k*fs);$('#nNy').textContent=(fs/2)+' Hz';$('#nAl').textContent=(+fa.toFixed(2))+' Hz';
+ const c=$('#nChip');if(f<fs/2)chip(c,'ok','سليم: fs > 2f');else if(f===fs/2)chip(c,'warn','على الحد تماماً');else chip(c,'bad','تشويه Aliasing');}
+const L={el,resize(){g=fit(cv,w=>w<560?240:270);},live:()=>play,tick(dt){tau+=dt*.04;this.draw();},
+draw(){const {ctx,w,h}=g;ctx.clearRect(0,0,w,h);const Lx=30,Rx=w-14,cy=h/2-6,A=(h-40)*.42,X=t=>Lx+t*(Rx-Lx);
+ ctx.strokeStyle=COL.line;ctx.lineWidth=1;for(let i=0;i<=10;i++)line(ctx,X(i/10),cy-A-6,X(i/10),cy+A+6);
+ ctx.strokeStyle=COL.muted;line(ctx,Lx,cy,Rx,cy);
+ txt(ctx,'0',X(0),h-10);txt(ctx,'0.5 s',X(.5),h-10);txt(ctx,'1 s',X(1),h-10);
+ const k=Math.round(f/fs),fa=f-k*fs,ph=2*Math.PI*f*tau,al=f>fs/2;
+ ctx.strokeStyle=COL.ch2;ctx.lineWidth=1.6;ctx.beginPath();for(let px=Lx;px<=Rx;px++){const tt=(px-Lx)/(Rx-Lx),y=cy-A*Math.sin(2*Math.PI*f*tt+ph);px===Lx?ctx.moveTo(px,y):ctx.lineTo(px,y);}ctx.stroke();
+ if(al){ctx.strokeStyle=COL.ch3;ctx.lineWidth=2.4;ctx.setLineDash([7,5]);ctx.beginPath();for(let px=Lx;px<=Rx;px++){const tt=(px-Lx)/(Rx-Lx),y=cy-A*Math.sin(2*Math.PI*fa*tt+ph);px===Lx?ctx.moveTo(px,y):ctx.lineTo(px,y);}ctx.stroke();ctx.setLineDash([]);}
+ ctx.strokeStyle=COL.ch1;ctx.fillStyle=COL.ch1;ctx.lineWidth=1.4;for(let n=0;n/fs<=1+1e-9;n++){const tt=n/fs,y=cy-A*Math.sin(2*Math.PI*f*tt+ph);line(ctx,X(tt),cy,X(tt),y);ctx.beginPath();ctx.arc(X(tt),y,4,0,7);ctx.fill();}}};
+$('#nF').addEventListener('input',e=>{f=+e.target.value;$('#nFo').textContent=f;info();L.draw();});
+$('#nS').addEventListener('input',e=>{fs=+e.target.value;$('#nSo').textContent=fs;info();L.draw();});
+$('#nPlay').addEventListener('click',e=>{play=!play;e.target.textContent=play?'إيقاف':'تشغيل';});
+$('#nPlay').textContent=play?'إيقاف':'تشغيل';
+info();reg(L);})();
+
+/* 03 QAM */
+(()=>{const el=$('#qam'),cv=$('#qCv');let g,M=16,snr=18,pts=[],sent=0,errs=0,play=!RM;
+const P=()=>{const m=Math.sqrt(M);return{m,sc:1/Math.sqrt(2*(M-1)/3),sig:Math.sqrt(1/(2*Math.pow(10,snr/10)))};};
+function send(k){const{m,sc,sig}=P();for(let i=0;i<k;i++){const ix=Math.random()*m|0,iy=Math.random()*m|0;const x=(2*ix-(m-1))*sc+sig*gauss(),y=(2*iy-(m-1))*sc+sig*gauss();
+ const dx=Math.min(m-1,Math.max(0,Math.round((x/sc+(m-1))/2))),dy=Math.min(m-1,Math.max(0,Math.round((y/sc+(m-1))/2)));const e=dx!==ix||dy!==iy;pts.push([x,y,e]);sent++;if(e)errs++;}
+ if(pts.length>2400)pts.splice(0,pts.length-2400);stat();}
+function clear(){pts=[];sent=0;errs=0;stat();}
+function stat(){$('#qB').textContent=Math.log2(M);$('#qN').textContent=sent.toLocaleString('en');const ser=sent?errs/sent:null;$('#qE').textContent=ser===null?'–':(ser*100).toFixed(ser<.01?3:1)+'%';
+ const c=$('#qChip');if(sent<200)chip(c,'warn','جارٍ القياس…');else if(ser<.001)chip(c,'ok','اتصال نظيف');else if(ser<.05)chip(c,'warn','مقبول مع تصحيح الأخطاء');else chip(c,'bad','فشل: انزل لتضمين أبسط');}
+const L={el,resize(){g=fit(cv,w=>Math.min(w,380));},live:()=>play,tick(){send(14);this.draw();},
+draw(){const {ctx,w,h}=g;ctx.clearRect(0,0,w,h);const{m,sc}=P(),side=Math.min(w,h)-20,ox=(w-side)/2,oy=10,E=((m-1)+1.7)*sc;
+ const X=v=>ox+(v+E)/(2*E)*side,Y=v=>oy+(E-v)/(2*E)*side;
+ ctx.strokeStyle=COL.line;ctx.lineWidth=1;ctx.strokeRect(ox,oy,side,side);
+ for(let j=0;j<m-1;j++){const v=(2*j-(m-1)+1)*sc;line(ctx,X(v),oy,X(v),oy+side);line(ctx,ox,Y(v),ox+side,Y(v));}
+ ctx.strokeStyle=COL.muted;line(ctx,X(0),oy,X(0),oy+side);line(ctx,ox,Y(0),ox+side,Y(0));
+ txt(ctx,'I',ox+side-8,Y(0)-9,'center',12,COL.ink);txt(ctx,'Q',X(0)+10,oy+10,'center',12,COL.ink);
+ ctx.save();ctx.beginPath();ctx.rect(ox,oy,side,side);ctx.clip();
+ ctx.fillStyle=COL.ch1;ctx.globalAlpha=.55;for(const p of pts)if(!p[2])ctx.fillRect(X(p[0])-1.2,Y(p[1])-1.2,2.4,2.4);
+ ctx.fillStyle=COL.ch3;ctx.globalAlpha=.95;for(const p of pts)if(p[2])ctx.fillRect(X(p[0])-1.6,Y(p[1])-1.6,3.2,3.2);
+ ctx.globalAlpha=1;ctx.strokeStyle=COL.ch2;ctx.lineWidth=1.6;const r=Math.max(2.2,side/(m*7));
+ for(let i=0;i<m;i++)for(let j=0;j<m;j++){ctx.beginPath();ctx.arc(X((2*i-(m-1))*sc),Y((2*j-(m-1))*sc),r,0,7);ctx.stroke();}
+ ctx.restore();}};
+seg($('#qM'),v=>{M=+v;clear();if(!play)send(600);L.draw();});
+$('#qS').addEventListener('input',e=>{snr=+e.target.value;$('#qSo').textContent=snr;clear();if(!play)send(600);L.draw();});
+$('#qPlay').addEventListener('click',e=>{play=!play;e.target.textContent=play?'إيقاف البث':'بث مستمر';if(!play){send(600);L.draw();}});
+$('#qClr').addEventListener('click',()=>{clear();L.draw();});
+$('#qPlay').textContent=play?'إيقاف البث':'بث مستمر';
+send(play?300:1200);reg(L);})();
+
+/* 04 SHANNON */
+(()=>{const el=$('#shannon'),cv=$('#sCv');let g,B=20e6,S=20;
+const toV=b=>Math.round((Math.log10(b)-3)/.0056),fromV=v=>Math.pow(10,3+v*.0056);
+const fHz=v=>v>=1e9?(v/1e9).toFixed(2)+' GHz':v>=1e6?(v/1e6).toFixed(v>=1e8?0:1)+' MHz':v>=1e3?(v/1e3).toFixed(1)+' kHz':v.toFixed(0)+' Hz';
+const fB=v=>v>=1e9?(v/1e9).toFixed(2)+' Gbps':v>=1e6?(v/1e6).toFixed(1)+' Mbps':v>=1e3?(v/1e3).toFixed(1)+' kbps':v.toFixed(0)+' bps';
+const eta=s=>Math.log2(1+Math.pow(10,s/10));
+function info(){$('#sBo').textContent=fHz(B);$('#sSo').textContent=S;const e=eta(S);$('#sC').textContent=fB(B*e);$('#sE').textContent=e.toFixed(2)+' b/s/Hz';$('#s2B').textContent=fB(2*B*e);$('#s2P').textContent=fB(B*eta(S+3.0103));}
+const L={el,resize(){g=fit(cv,w=>w<560?230:250);},
+draw(){const {ctx,w,h}=g;ctx.clearRect(0,0,w,h);const l=40,r=w-14,t=16,b=h-30,X=s=>l+(s+10)/50*(r-l),Y=v=>b-v/14*(b-t);
+ ctx.strokeStyle=COL.line;ctx.lineWidth=1;for(let v=0;v<=14;v+=2){line(ctx,l,Y(v),r,Y(v));txt(ctx,String(v),l-8,Y(v),'right',10);}
+ for(let s=-10;s<=40;s+=10){line(ctx,X(s),t,X(s),b);txt(ctx,String(s),X(s),b+12,'center',10);}
+ txt(ctx,'SNR (dB)',r,b-10,'right',10);txt(ctx,'bit/s/Hz',l+4,t+2,'left',10);
+ ctx.strokeStyle=COL.ch1;ctx.lineWidth=2.2;ctx.beginPath();for(let s=-10;s<=40;s+=.25){const y=Y(eta(s));s===-10?ctx.moveTo(X(s),y):ctx.lineTo(X(s),y);}ctx.stroke();
+ const mx=X(S),my=Y(eta(S));ctx.setLineDash([4,4]);ctx.strokeStyle=COL.ch2;ctx.lineWidth=1.2;line(ctx,mx,b,mx,my);line(ctx,l,my,mx,my);ctx.setLineDash([]);
+ ctx.fillStyle=COL.ch2;ctx.beginPath();ctx.arc(mx,my,5.5,0,7);ctx.fill();}};
+$('#sB').addEventListener('input',e=>{B=fromV(+e.target.value);info();});
+$('#sS').addEventListener('input',e=>{S=+e.target.value;info();L.draw();});
+$('#sPre').addEventListener('click',e=>{const bt=e.target.closest('button');if(!bt)return;B=+bt.dataset.b;S=+bt.dataset.s;$('#sB').value=toV(B);$('#sS').value=S;info();L.draw();});
+$('#sB').value=toV(B);info();reg(L);})();
+
+/* 05 HAMMING */
+(()=>{let data=[1,0,1,1],flips=new Set();const role=['p1','p2','d1','p4','d2','d3','d4'];
+const enc=d=>{const[d1,d2,d3,d4]=d;return[d1^d2^d4,d1^d3^d4,d1,d2^d3^d4,d2,d3,d4];};
+function cell(v,i,cls,tag='div'){return`<${tag} class="bit ${cls}" ${tag==='button'?`data-i="${i}" aria-label="البت ${i+1}"`:''}>${v}<small>${i+1}·${role[i]}</small></${tag}>`;}
+function render(){const s=enc(data),r=s.map((b,i)=>flips.has(i)?b^1:b);
+ $('#hData').innerHTML=data.map((b,i)=>`<button class="bit" data-d="${i}" aria-label="بت البيانات ${i+1}">${b}<small>d${i+1}</small></button>`).join('');
+ $('#hSent').innerHTML=s.map((b,i)=>cell(b,i,role[i][0]==='p'?'par':'')).join('');
+ $('#hRecv').innerHTML=r.map((b,i)=>cell(b,i,(role[i][0]==='p'?'par ':'')+(flips.has(i)?'flip':''),'button')).join('');
+ const R=i=>r[i-1],s1=R(1)^R(3)^R(5)^R(7),s2=R(2)^R(3)^R(6)^R(7),s4=R(4)^R(5)^R(6)^R(7),pos=s1+2*s2+4*s4;
+ $('#hChk').textContent=`s1 = r1⊕r3⊕r5⊕r7 = ${R(1)}⊕${R(3)}⊕${R(5)}⊕${R(7)} = ${s1}\ns2 = r2⊕r3⊕r6⊕r7 = ${R(2)}⊕${R(3)}⊕${R(6)}⊕${R(7)} = ${s2}\ns4 = r4⊕r5⊕r6⊕r7 = ${R(4)}⊕${R(5)}⊕${R(6)}⊕${R(7)} = ${s4}`;
+ const fx=r.slice();if(pos)fx[pos-1]^=1;
+ $('#hFix').innerHTML=fx.map((b,i)=>cell(b,i,(role[i][0]==='p'?'par ':'')+(pos&&i===pos-1?'fix':''))).join('');
+ $('#hSyn').textContent=`${s4}${s2}${s1} = ${pos}`;const out=[fx[2],fx[4],fx[5],fx[6]];$('#hOut').textContent=out.join('');
+ const ok=out.join('')===data.join(''),c=$('#hChip');
+ if(!flips.size)chip(c,'ok','لا أخطاء: المتلازمة صفر');
+ else if(ok)chip(c,'ok',`الخطأ في الموقع ${pos} وتم تصحيحه`);
+ else chip(c,'bad',flips.size===2?'خطآن: هامينغ "صحّح" بتاً سليماً. هنا يلزم SECDED':'أخطاء كثيرة: تجاوزنا قدرة الشيفرة');}
+$('#hData').addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;data[+b.dataset.d]^=1;render();});
+$('#hRecv').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;const i=+b.dataset.i;flips.has(i)?flips.delete(i):flips.add(i);render();});
+$('#hOne').addEventListener('click',()=>{flips=new Set([Math.random()*7|0]);render();});
+$('#hTwo').addEventListener('click',()=>{const a=Math.random()*7|0;let b;do b=Math.random()*7|0;while(b===a);flips=new Set([a,b]);render();});
+$('#hClr').addEventListener('click',()=>{flips.clear();render();});
+flips.add(4);render();})();
+
+/* 06 RSA */
+(()=>{const PR=[47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131];
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const inv=(e,m)=>{let[o,r]=[e,m],[os,s]=[1,0];while(r){const q=Math.floor(o/r);[o,r]=[r,o-q*r];[os,s]=[s,os-q*s];}return((os%m)+m)%m;};
+const mp=(b,e,m)=>{let B=BigInt(b)%BigInt(m),E=BigInt(e),M=BigInt(m),r=1n;while(E>0n){if(E&1n)r=r*B%M;B=B*B%M;E>>=1n;}return Number(r);};
+const sp=$('#rP'),sq=$('#rQ');for(const s of[sp,sq])s.innerHTML=PR.map(p=>`<option value="${p}">${p}</option>`).join('');sp.value=61;sq.value=53;
+function render(){let p=+sp.value,q=+sq.value;if(p===q){q=PR[(PR.indexOf(q)+1)%PR.length];sq.value=q;}
+ const n=p*q,phi=(p-1)*(q-1);let e=[65537,17,3,5,7,11,13,19,23,29,31,37].find(c=>c<phi&&gcd(c,phi)===1);const d=inv(e,phi);
+ $('#rKeys').innerHTML=[['n = p × q',`${p} × ${q} = ${n}`],['φ(n) = (p−1)(q−1)',phi],['المفتاح العام (n, e)',`(${n}, ${e})`],['المفتاح الخاص d',d],['تحقق: e·d mod φ',(e*d)%phi]].map(([a,b])=>`<div class="key"><span>${a}</span><b>${b}</b></div>`).join('');
+ const chars=Array.from($('#rM').value).slice(0,14);
+ $('#rRows').innerHTML=chars.map(ch=>{const m=ch.codePointAt(0);if(m>=n)return`<tr><td>${ch}</td><td class="n">${m}</td><td colspan="3">الرمز أكبر من n</td></tr>`;const c=mp(m,e,n),back=mp(c,d,n);return`<tr><td>${ch===' '?'␣':ch}</td><td class="n">${m}</td><td class="n">${c}</td><td class="n">${back}</td><td>${String.fromCodePoint(back)}</td></tr>`;}).join('');
+ $('#rLog').textContent='المهاجم يعرف n و e فقط. هل يستطيع إيجاد d؟';return{n,e,phi};}
+let st=render();for(const x of[sp,sq,$('#rM')])x.addEventListener('input',()=>{st=render();});
+$('#rBreak').addEventListener('click',()=>{const{n,e}=st;let i=2,tries=0;for(;i*i<=n;i++){tries++;if(n%i===0)break;}const p=i,q=n/i,d=inv(e,(p-1)*(q-1));
+ $('#rLog').textContent=`تم الكسر بعد ${tries} محاولة قسمة فقط: n = ${p} × ${q}، إذن φ = ${(p-1)*(q-1)} و d = ${d}. مع RSA-2048 عدد المحاولات بهذه الطريقة يقارب 10^308.`;});})();
+
+/* 07 DIJKSTRA */
+(()=>{const el=$('#dijkstra'),cv=$('#dCv');let g;
+const P={A:[.06,.5],B:[.27,.14],C:[.27,.86],D:[.5,.5],E:[.72,.14],F:[.72,.86],G:[.94,.5],H:[.5,.9]},K=Object.keys(P);
+let E=[['A','B',4],['A','C',2],['B','C',1],['B','D',5],['C','D',8],['C','H',10],['B','E',10],['D','E',2],['D','F',6],['D','H',3],['H','F',2],['E','F',7],['E','G',3],['F','G',5]];
+let src='A',dst='G',dist,prev,vis,cur,relax,done,timer=null,msg='';
+const fmt=v=>v===Infinity?'∞':v;
+for(const s of[$('#dS'),$('#dT')])s.innerHTML=K.map(k=>`<option>${k}</option>`).join('');$('#dS').value=src;$('#dT').value=dst;
+function reset(){stop();dist={};prev={};K.forEach(k=>{dist[k]=Infinity;prev[k]=null;});dist[src]=0;vis=new Set();cur=null;relax=[];done=false;msg=`ابدأ: المسافة إلى ${src} صفر، والبقية ∞. اضغط "خطوة".`;ui();}
+function step(){if(done)return;let u=null;for(const k of K)if(!vis.has(k)&&(u===null||dist[k]<dist[u]))u=k;if(u===null||dist[u]===Infinity){done=true;ui();return;}
+ vis.add(u);cur=u;relax=[];const ch=[];E.forEach((ed,i)=>{let v=null;if(ed[0]===u)v=ed[1];else if(ed[1]===u)v=ed[0];if(!v||vis.has(v))return;const nd=dist[u]+ed[2];if(nd<dist[v]){ch.push(`${v}: ${fmt(dist[v])} ← ${nd}`);dist[v]=nd;prev[v]=u;relax.push(i);}});
+ msg=`زرنا ${u} بمسافة نهائية ${dist[u]}. `+(ch.length?'حدّثنا: '+ch.join('، '):'لا تحديثات للجيران.');if(vis.size===K.length){done=true;msg+=` انتهت الخوارزمية: أقصر مسار إلى ${dst} تكلفته ${dist[dst]}.`;stop();}ui();}
+function path(){const s=new Set();if(!vis.has(dst))return s;let v=dst;while(prev[v]){const u=prev[v];s.add(E.findIndex(e=>(e[0]===u&&e[1]===v)||(e[1]===u&&e[0]===v)));v=u;}return s;}
+function stop(){if(timer){clearInterval(timer);timer=null;}$('#dRun').textContent='تشغيل';}
+function ui(){$('#dLog').textContent=msg;$('#dRows').innerHTML=K.map(k=>`<tr class="${k===cur?'on':''}"><td>${k}${k===src?' (مصدر)':k===dst?' (وجهة)':''}</td><td class="n">${fmt(dist[k])}</td><td>${prev[k]||'–'}</td><td>${vis.has(k)?'نهائية ✓':dist[k]<Infinity?'مؤقتة':'لم تُكتشف'}</td></tr>`).join('');L.draw();}
+const map=(g,[x,y])=>[28+x*(g.w-56),30+y*(g.h-60)];
+const L={el,resize(){g=fit(cv,w=>Math.max(260,Math.min(380,w*.56)));},
+draw(){if(!g||!dist)return;const{ctx,w,h}=g;ctx.clearRect(0,0,w,h);const pth=path();
+ E.forEach((e,i)=>{const[a,b]=[map(g,P[e[0]]),map(g,P[e[1]])];if(pth.has(i)){ctx.strokeStyle=COL.ch1;ctx.lineWidth=5;}else if(relax.includes(i)){ctx.strokeStyle=COL.ch2;ctx.lineWidth=2.6;}else{ctx.strokeStyle=COL.muted;ctx.lineWidth=1.4;ctx.globalAlpha=.55;}line(ctx,a[0],a[1],b[0],b[1]);ctx.globalAlpha=1;});
+ E.forEach(e=>{const[a,b]=[map(g,P[e[0]]),map(g,P[e[1]])],mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;ctx.fillStyle=COL.paper;ctx.strokeStyle=COL.line;ctx.lineWidth=1;ctx.beginPath();ctx.arc(mx,my,11,0,7);ctx.fill();ctx.stroke();txt(ctx,String(e[2]),mx,my+.5,'center',11,COL.ink);});
+ K.forEach(k=>{const[x,y]=map(g,P[k]);if(k===dst){ctx.strokeStyle=COL.ch3;ctx.setLineDash([4,3]);ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(x,y,24,0,7);ctx.stroke();ctx.setLineDash([]);}
+  const fill=k===cur?COL.ch1:vis.has(k)?COL.ch2:COL.screen;ctx.fillStyle=fill;ctx.strokeStyle=k===src?COL.ch2:COL.ink;ctx.lineWidth=k===src?3:1.4;ctx.beginPath();ctx.arc(x,y,17,0,7);ctx.fill();ctx.stroke();
+  txt(ctx,k,x,y+.5,'center',14,(k===cur||vis.has(k))?COL.screen:COL.ink);const oy=P[k][1]<.3?-28:28;txt(ctx,'d='+fmt(dist[k]),x,y+(P[k][1]>.7?-28:oy),'center',11,COL.ink);});},
+hit(x,y){for(let i=0;i<E.length;i++){const[a,b]=[map(g,P[E[i][0]]),map(g,P[E[i][1]])];if(Math.hypot(x-(a[0]+b[0])/2,y-(a[1]+b[1])/2)<14)return['e',i];}for(const k of K){const[a,b]=map(g,P[k]);if(Math.hypot(x-a,y-b)<20)return['n',k];}return null;}};
+cv.addEventListener('click',ev=>{const r=cv.getBoundingClientRect(),h=L.hit(ev.clientX-r.left,ev.clientY-r.top);if(!h)return;if(h[0]==='e'){E[h[1]][2]=E[h[1]][2]>=18?1:E[h[1]][2]+3;}else{if(h[1]===src)return;dst=h[1];$('#dT').value=dst;}reset();});
+$('#dS').addEventListener('change',e=>{src=e.target.value;reset();});$('#dT').addEventListener('change',e=>{dst=e.target.value;ui();});
+$('#dStep').addEventListener('click',step);$('#dReset').addEventListener('click',reset);
+$('#dRun').addEventListener('click',()=>{if(timer){stop();return;}if(done)reset();timer=setInterval(step,RM?250:750);$('#dRun').textContent='إيقاف';});
+$('#dRand').addEventListener('click',()=>{E.forEach(e=>e[2]=1+(Math.random()*12|0));reset();});
+reg(L);reset();})();
+
+/* 08 GPS */
+(()=>{const el=$('#gps'),cv=$('#gCv');let g,mode=3,dtns=300,nz=5,nv=[gauss(),gauss(),gauss(),gauss()];
+const W=10000,H=6000,S=[[1000,900],[9100,1300],[5300,5500],[1300,5000]],c=0.299792458;let rx=[4300,2700],est=[0,0],bEst=null;
+function compute(){const bias=c*dtns,used=mode===3?3:4,rho=S.slice(0,used).map((s,i)=>Math.hypot(s[0]-rx[0],s[1]-rx[1])+bias+nz*nv[i]);
+ if(mode===3){const[[x1,y1],[x2,y2],[x3,y3]]=S,[r1,r2,r3]=rho;const sol=solve([[2*(x2-x1),2*(y2-y1)],[2*(x3-x1),2*(y3-y1)]],[r1*r1-r2*r2+x2*x2-x1*x1+y2*y2-y1*y1,r1*r1-r3*r3+x3*x3-x1*x1+y3*y3-y1*y1]);est=sol||[NaN,NaN];bEst=null;}
+ else{let x=5000,y=3000,b=0;for(let it=0;it<25;it++){const J=[],r=[];S.forEach((s,i)=>{const d=Math.hypot(x-s[0],y-s[1])||1;J.push([(x-s[0])/d,(y-s[1])/d,1]);r.push(rho[i]-(d+b));});
+  const N=[0,1,2].map(a=>[0,1,2].map(bb=>J.reduce((t,j)=>t+j[a]*j[bb],0))),gv=[0,1,2].map(a=>J.reduce((t,j,k)=>t+j[a]*r[k],0)),dl=solve(N,gv);if(!dl)break;x+=dl[0];y+=dl[1];b+=dl[2];if(Math.hypot(dl[0],dl[1])<1e-4)break;}est=[x,y];bEst=b;}
+ const err=Math.hypot(est[0]-rx[0],est[1]-rx[1]);$('#gBias').textContent=bias.toFixed(1)+' m';$('#gErr').textContent=isFinite(err)?err.toFixed(1)+' m':'–';
+ $('#gEst').textContent=bEst===null?'غير محسوب':(bEst/c).toFixed(0)+' ns';
+ const ch=$('#gChip');if(err<15)chip(ch,'ok','دقة ممتازة');else if(err<60)chip(ch,'warn','دقة متوسطة');else chip(ch,'bad','خطأ كبير');return rho;}
+let lay;const toW=(px,py)=>[(px-lay.ox)/lay.s,(py-lay.oy)/lay.s];
+const L={el,resize(){g=fit(cv,w=>Math.max(280,Math.min(420,w*.62)));const p=24;const s=Math.min((g.w-2*p)/W,(g.h-2*p)/H);lay={s,ox:(g.w-W*s)/2,oy:(g.h-H*s)/2};},
+draw(){const{ctx,w,h}=g,{s,ox,oy}=lay,X=v=>ox+v*s,Y=v=>oy+v*s,rho=compute();ctx.clearRect(0,0,w,h);
+ ctx.strokeStyle=COL.line;ctx.lineWidth=1;for(let x=0;x<=W;x+=1000)line(ctx,X(x),Y(0),X(x),Y(H));for(let y=0;y<=H;y+=1000)line(ctx,X(0),Y(y),X(W),Y(y));
+ for(let x=0;x<=W;x+=2000)txt(ctx,(x/1000)+' km',X(x),Y(H)+11,'center',9);
+ ctx.save();ctx.beginPath();ctx.rect(0,0,w,h);ctx.clip();
+ rho.forEach((r,i)=>{ctx.strokeStyle=COL.ch2;ctx.globalAlpha=.6;ctx.setLineDash([5,4]);ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(X(S[i][0]),Y(S[i][1]),r*s,0,7);ctx.stroke();});ctx.setLineDash([]);ctx.globalAlpha=1;
+ S.forEach((p,i)=>{const used=i<(mode===3?3:4);ctx.fillStyle=used?COL.ch2:COL.muted;ctx.globalAlpha=used?1:.35;const x=X(p[0]),y=Y(p[1]);ctx.beginPath();ctx.moveTo(x,y-8);ctx.lineTo(x+7,y+5);ctx.lineTo(x-7,y+5);ctx.closePath();ctx.fill();txt(ctx,'S'+(i+1),x,y+15,'center',11,COL.ink);ctx.globalAlpha=1;});
+ const tx=X(rx[0]),ty=Y(rx[1]);ctx.fillStyle=COL.ink;ctx.globalAlpha=.18;ctx.beginPath();ctx.arc(tx,ty,13,0,7);ctx.fill();ctx.globalAlpha=1;ctx.beginPath();ctx.arc(tx,ty,5.5,0,7);ctx.fill();
+ if(isFinite(est[0])){const ex=X(est[0]),ey=Y(est[1]);ctx.strokeStyle=COL.ch3;ctx.setLineDash([3,3]);ctx.lineWidth=1.4;line(ctx,tx,ty,ex,ey);ctx.setLineDash([]);ctx.lineWidth=2.6;line(ctx,ex-7,ey-7,ex+7,ey+7);line(ctx,ex-7,ey+7,ex+7,ey-7);}
+ ctx.restore();}};
+let drag=false;const mv=e=>{const r=cv.getBoundingClientRect();const[x,y]=toW(e.clientX-r.left,e.clientY-r.top);rx=[Math.min(W,Math.max(0,x)),Math.min(H,Math.max(0,y))];L.draw();};
+cv.addEventListener('pointerdown',e=>{drag=true;try{cv.setPointerCapture(e.pointerId);}catch(_){}mv(e);});cv.addEventListener('pointermove',e=>{if(drag)mv(e);});
+for(const ev of['pointerup','pointercancel'])cv.addEventListener(ev,()=>drag=false);
+seg($('#gMode'),v=>{mode=+v;L.draw();});
+$('#gDt').addEventListener('input',e=>{dtns=+e.target.value;$('#gDto').textContent=dtns;L.draw();});
+$('#gNz').addEventListener('input',e=>{nz=+e.target.value;$('#gNzo').textContent=nz;L.draw();});
+$('#gNew').addEventListener('click',()=>{nv=[gauss(),gauss(),gauss(),gauss()];L.draw();});
+reg(L);})();
+
+/* 09 PAGERANK */
+(()=>{const el=$('#pagerank'),cv=$('#pCv');let g;const NM=['Home','Blog','News','Shop','Wiki','Docs'],N=NM.length;
+const DEF=['0>1','0>2','1>4','1>0','2>4','2>0','3>0','3>2','4>0','4>5','5>4'];let links=new Set(DEF),d=.85,r=Array(N).fill(1/N),disp=r.slice(),it=0,dl=null,sel=null,timer=null;
+function iterate(){const out=Array(N).fill(0);links.forEach(l=>out[+l.split('>')[0]]++);let dang=0;for(let i=0;i<N;i++)if(!out[i])dang+=r[i];
+ const nr=Array(N).fill((1-d)/N+d*dang/N);links.forEach(l=>{const[a,b]=l.split('>').map(Number);nr[b]+=d*r[a]/out[a];});dl=nr.reduce((s,v,i)=>s+Math.abs(v-r[i]),0);r=nr;it++;if(RM)disp=r.slice();info();if(dl<1e-6)stop();}
+function stop(){if(timer){clearInterval(timer);timer=null;}$('#pRun').textContent='حتى الاستقرار';}
+function info(){$('#pIt').textContent=it;$('#pDl').textContent=dl===null?'–':dl.toExponential(2);const c=$('#pChip');if(!it)chip(c,'warn','لم يبدأ');else if(dl<1e-6)chip(c,'ok','استقر: هذا هو المتجه الذاتي');else chip(c,'warn','يتقارب…');
+ const ord=[...Array(N).keys()].sort((a,b)=>r[b]-r[a]),mx=Math.max(...r);$('#pBars').innerHTML=ord.map(i=>`<div class="bar"><span class="nm">${NM[i]}</span><span class="tr"><span class="fl" style="display:block;width:${(r[i]/mx*100).toFixed(1)}%"></span></span><span class="v">${(r[i]*100).toFixed(1)}%</span></div>`).join('');}
+const pos=i=>{const a=-Math.PI/2+i*2*Math.PI/N,R=Math.min(g.w*.36,g.h*.36);return[g.w/2+R*Math.cos(a)*1.25,g.h/2+R*Math.sin(a)];};
+const rad=i=>Math.min(42,13+85*disp[i]);
+const L={el,resize(){g=fit(cv,w=>Math.max(280,Math.min(360,w*.6)));},live:()=>disp.some((v,i)=>Math.abs(v-r[i])>1e-4),tick(dt){const k=Math.min(1,dt*6);disp=disp.map((v,i)=>v+(r[i]-v)*k);this.draw();},
+draw(){const{ctx,w,h}=g;ctx.clearRect(0,0,w,h);
+ links.forEach(l=>{const[a,b]=l.split('>').map(Number),[x1,y1]=pos(a),[x2,y2]=pos(b),dx=x2-x1,dy=y2-y1,D=Math.hypot(dx,dy),ux=dx/D,uy=dy/D,nx=-uy,ny=ux;
+  const sx=x1+ux*rad(a),sy=y1+uy*rad(a),ex=x2-ux*(rad(b)+3),ey=y2-uy*(rad(b)+3),cx=(sx+ex)/2+nx*16,cy=(sy+ey)/2+ny*16;const on=sel===a;
+  ctx.strokeStyle=on?COL.ch2:COL.muted;ctx.fillStyle=ctx.strokeStyle;ctx.globalAlpha=on?1:.7;ctx.lineWidth=on?2:1.3;ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo(cx,cy,ex,ey);ctx.stroke();
+  const an=Math.atan2(ey-cy,ex-cx);ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-9*Math.cos(an-.42),ey-9*Math.sin(an-.42));ctx.lineTo(ex-9*Math.cos(an+.42),ey-9*Math.sin(an+.42));ctx.closePath();ctx.fill();ctx.globalAlpha=1;});
+ for(let i=0;i<N;i++){const[x,y]=pos(i),R=rad(i);ctx.fillStyle=COL.ch1;ctx.globalAlpha=.88;ctx.beginPath();ctx.arc(x,y,R,0,7);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=sel===i?COL.ch2:COL.ink;ctx.lineWidth=sel===i?3:1.2;ctx.stroke();
+  const below=y>h/2;txt(ctx,NM[i],x,y+(below?R+12:-R-12),'center',12,COL.ink);if(R>22)txt(ctx,(disp[i]*100).toFixed(0)+'%',x,y,'center',11,COL.screen);}}};
+cv.addEventListener('click',e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;let hit=null;for(let i=0;i<N;i++){const[px,py]=pos(i);if(Math.hypot(x-px,y-py)<rad(i)+8)hit=i;}
+ if(hit===null){sel=null;L.draw();return;}if(sel===null){sel=hit;}else if(sel===hit){sel=null;}else{const k=sel+'>'+hit;links.has(k)?links.delete(k):links.add(k);sel=null;dl=null;it=0;info();}L.draw();});
+$('#pD').addEventListener('input',e=>{d=+e.target.value;$('#pDo').textContent=d.toFixed(2);it=0;dl=null;info();});
+$('#pStep').addEventListener('click',()=>{iterate();L.draw();});
+$('#pRun').addEventListener('click',()=>{if(timer){stop();return;}timer=setInterval(()=>{iterate();if(RM)L.draw();if(it>300)stop();},RM?80:320);$('#pRun').textContent='إيقاف';});
+$('#pReset').addEventListener('click',()=>{stop();links=new Set(DEF);r=Array(N).fill(1/N);disp=r.slice();it=0;dl=null;sel=null;info();L.draw();});
+info();reg(L);})();
+
+requestAnimationFrame(loop);
+document.fonts&&document.fonts.ready.then(redrawAll);
+</script>
+
+</body></html>
